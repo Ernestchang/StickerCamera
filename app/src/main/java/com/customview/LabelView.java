@@ -202,13 +202,9 @@ public class LabelView extends LinearLayout {
 
         waveView.setStyle(Paint.Style.FILL);
         waveView.setColor(Color.BLACK);
-//                waveView.setInterpolator(new LinearOutSlowInInterpolator());
         waveView.setAnimationFinishListener(() -> {
-                    Log.e("ernest", " setAnimationFinishListener valueAnimator start ");
-
                     valueAnimator.start();
                     waveView.stopImmediately();
-//                            waveView.stop();
                 }
         );
 
@@ -216,7 +212,6 @@ public class LabelView extends LinearLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float value = (float) valueAnimator.getAnimatedValue();
-//                Log.e("ernest", "value:" + value);
                 labelIcon.setScaleX(value);
                 labelIcon.setScaleY(value);
             }
@@ -225,7 +220,6 @@ public class LabelView extends LinearLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-//                Log.e("ernest", "onAnimationEnd valueAnimation start");
                 waveView.start();
 
             }
