@@ -1,15 +1,16 @@
 package com.customview;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +32,7 @@ public class LabelView extends LinearLayout {
     private float parentWidth = 0;
     private float parentHeight = 0;
     private ImageView labelIcon;
+    private WaveView waveView;
     private TextView labelTxtLeft;
     private TextView labelTxtRight;
 
@@ -42,6 +44,7 @@ public class LabelView extends LinearLayout {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.view_label, this);
         labelIcon = (ImageView) findViewById(R.id.label_icon);
+        waveView = (WaveView) findViewById(R.id.wave);
         labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
         labelTxtRight = (TextView) findViewById(R.id.label_text_right);
     }
@@ -50,6 +53,7 @@ public class LabelView extends LinearLayout {
         super(context, attr);
         LayoutInflater.from(context).inflate(R.layout.view_label, this);
         labelIcon = (ImageView) findViewById(R.id.label_icon);
+        waveView = (WaveView) findViewById(R.id.wave);
         labelTxtLeft = (TextView) findViewById(R.id.label_text_left);
         labelTxtRight = (TextView) findViewById(R.id.label_text_right);
     }
@@ -189,19 +193,61 @@ public class LabelView extends LinearLayout {
         labelTxtRight.setVisibility(View.GONE);
     }
 
+
+    ValueAnimator valueAnimator;
+
     public void wave() {
-        AnimationSet as = new AnimationSet(true);
-        ScaleAnimation sa = new ScaleAnimation(1f, 1.5f, 1f, 1.5f, ScaleAnimation.RELATIVE_TO_SELF,
-                0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f);
-        sa.setDuration(ANIMATIONEACHOFFSET * 3);
-        sa.setRepeatCount(10);// 设置循环
-        AlphaAnimation aniAlp = new AlphaAnimation(1, 0.1f);
-        aniAlp.setRepeatCount(10);// 设置循环
-        as.setDuration(ANIMATIONEACHOFFSET * 3);
-        as.addAnimation(sa);
-        as.addAnimation(aniAlp);
-        labelIcon.startAnimation(as);
+        valueAnimator = ValueAnimator.ofFloat(0.8f, 1.3f, 1.0f).setDuration(1000);
+//        valueAnimator.setInterpolator(new OvershootInterpolator());
+
+        waveView.setStyle(Paint.Style.FILL);
+        waveView.setColor(Color.BLACK);
+//                waveView.setInterpolator(new LinearOutSlowInInterpolator());
+        waveView.setAnimationFinishListener(() -> {
+                    Log.e("ernest", " setAnimationFinishListener valueAnimator start ");
+
+                    valueAnimator.start();
+                    waveView.stopImmediately();
+//                            waveView.stop();
+                }
+        );
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float value = (float) valueAnimator.getAnimatedValue();
+//                Log.e("ernest", "value:" + value);
+                labelIcon.setScaleX(value);
+                labelIcon.setScaleY(value);
+            }
+        });
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+//                Log.e("ernest", "onAnimationEnd valueAnimation start");
+                waveView.start();
+
+            }
+        });
+
+        valueAnimator.start();
     }
+
+//    public void wave() {
+//
+//        AnimationSet as = new AnimationSet(true);
+//        ScaleAnimation sa = new ScaleAnimation(1f, 1.5f, 1f, 1.5f, ScaleAnimation.RELATIVE_TO_SELF,
+//                0.5f, ScaleAnimation.RELATIVE_TO_SELF, 0.5f);
+//        sa.setDuration(ANIMATIONEACHOFFSET * 3);
+//        sa.setRepeatCount(10);// 设置循环
+//        AlphaAnimation aniAlp = new AlphaAnimation(1, 0.1f);
+//        aniAlp.setRepeatCount(10);// 设置循环
+//        as.setDuration(ANIMATIONEACHOFFSET * 3);
+//        as.addAnimation(sa);
+//        as.addAnimation(aniAlp);
+//        labelIcon.startAnimation(as);
+//    }
 
     public void updateLocation(int x, int y) {
         x = x < 0 ? 0 : x;

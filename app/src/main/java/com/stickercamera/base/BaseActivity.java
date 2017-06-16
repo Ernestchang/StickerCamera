@@ -1,21 +1,17 @@
 package com.stickercamera.base;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
-import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.github.skykai.stickercamera.R;
 import com.customview.CommonTitleBar;
+import com.github.skykai.stickercamera.R;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-
-import butterknife.ButterKnife;
 
 /**
  * Created by sky on 15/7/6.
@@ -39,7 +35,7 @@ public class BaseActivity extends AppCompatActivity implements ActivityResponsab
     private void initWindow() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             SystemBarTintManager tintManager = new SystemBarTintManager(this);
             tintManager.setStatusBarTintColor(getStatusBarColor());
             tintManager.setStatusBarTintEnabled(true);

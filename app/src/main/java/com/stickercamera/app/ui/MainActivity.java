@@ -1,26 +1,20 @@
 package com.stickercamera.app.ui;
 
+import android.Manifest;
 import android.graphics.BitmapFactory;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.common.util.DataUtils;
-import com.common.util.FileUtils;
 import com.common.util.StringUtils;
 import com.customview.LabelView;
 import com.github.skykai.stickercamera.R;
@@ -31,8 +25,7 @@ import com.stickercamera.app.camera.CameraManager;
 import com.stickercamera.app.model.FeedItem;
 import com.stickercamera.app.model.TagItem;
 import com.stickercamera.base.BaseActivity;
-
-import org.json.JSONArray;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +48,7 @@ public class MainActivity extends BaseActivity {
     RecyclerView mRecyclerView;
     private List<FeedItem> feedList;
     private PictureAdapter mAdapter;
+    private RxPermissions mPermission;
 
 
     @Override
@@ -64,6 +58,8 @@ public class MainActivity extends BaseActivity {
         ButterKnife.inject(this);
         EventBus.getDefault().register(this);
         initView();
+        mPermission = new RxPermissions(this);
+        requestPermission();
 
         //如果没有照片则打开相机
         String str = DataUtils.getStringPreferences(App.getApp(), AppConstants.FEED_INFO);
@@ -75,6 +71,28 @@ public class MainActivity extends BaseActivity {
         } else {
             mAdapter.setList(feedList);
         }
+
+    }
+
+    private void requestPermission() {
+        mPermission
+                .requestEach(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe(permission -> { // will emit 2 Permission objects
+                    if (permission.granted) {
+                        // `permission.name` is granted !
+                        if (permission.name.equals(Manifest.permission.READ_PHONE_STATE)) {
+                        }
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // Denied permission without ask never again
+                        if (permission.name.equals(Manifest.permission.READ_PHONE_STATE)) {
+                        }
+                    } else {
+                        // Denied permission with ask never again
+                        // Need to go to the settings
+                        if (permission.name.equals(Manifest.permission.READ_PHONE_STATE)) {
+                        }
+                    }
+                });
 
     }
 
